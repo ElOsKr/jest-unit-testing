@@ -45,7 +45,15 @@ class Room {
     }
 
     static availableRooms(rooms,startDate,endDate){
+        const roomsAvailable = [];
 
+        rooms.forEach(room => {
+            if(room.occupancyPercentage(startDate,endDate)===0){
+                roomsAvailable.push(room)
+            }
+        });
+
+        return roomsAvailable;
     }
 
 }
