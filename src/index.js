@@ -87,7 +87,7 @@ class Booking{
 
     getFee(){
         const total = ((this.discount + this.room.discount)>=90) ? 90 : this.discount + this.room.discount
-        return (this.room.rate - Math.floor(this.room.rate * (total / 100)))
+        return (Math.floor(this.room.rate * (total / 100)))
     }
 }
 

@@ -60,7 +60,7 @@ describe('Percentage of days with occupancy', () => {
 })
 
 describe('Array with rooms not occuped', () => {
-    test('should return an empty array (no available rooms)', () => {
+    test('should be equal to an empty array (no available rooms)', () => {
 
         const booking1 = new Booking("Booking1","example1@exaple",new Date("04/16/2023"),new Date("04/18/2023"),30,{});
         const booking2 = new Booking("Booking2","example1@exaple",new Date("04/18/2023"),new Date("04/20/2023"),30,{});
@@ -73,6 +73,31 @@ describe('Array with rooms not occuped', () => {
         expect(Room.availableRooms(rooms,new Date("04/16/2023"),new Date("04/20/2023"))).toEqual([]);
     })
 
+    test('should be equal to room1', () => {
+
+        const booking1 = new Booking("Booking1","example1@exaple",new Date("04/16/2023"),new Date("04/18/2023"),30,{});
+        const booking2 = new Booking("Booking2","example1@exaple",new Date("04/18/2023"),new Date("04/20/2023"),30,{});
+
+        const room1 = new Room("Special",[booking1],1000,10);
+        const room2 = new Room("Special",[booking2],1000,10);
+
+        const rooms = [room1,room2]
+
+        expect(Room.availableRooms(rooms,new Date("04/19/2023"),new Date("04/20/2023"))).toEqual([room1]);
+    })
+
+    test('should be equal to room2', () => {
+
+        const booking1 = new Booking("Booking1","example1@exaple",new Date("04/16/2023"),new Date("04/18/2023"),30,{});
+        const booking2 = new Booking("Booking2","example1@exaple",new Date("04/18/2023"),new Date("04/20/2023"),30,{});
+
+        const room1 = new Room("Special",[booking1],1000,10);
+        const room2 = new Room("Special",[booking2],1000,10);
+
+        const rooms = [room1,room2]
+
+        expect(Room.availableRooms(rooms,new Date("04/16/2023"),new Date("04/17/2023"))).toEqual([room2]);
+    })
 })
 
 describe('Total occupancy percentage across all rooms', () => {
@@ -89,10 +114,48 @@ describe('Total occupancy percentage across all rooms', () => {
         expect(Room.totalOccupancyPercentage(rooms,new Date("04/16/2023"),new Date("04/18/2023"))).toEqual(100);
     })
 
+    test('should return 80', () => {
+
+        const booking1 = new Booking("Booking1","example1@exaple",new Date("04/16/2023"),new Date("04/18/2023"),30,{});
+        const booking2 = new Booking("Booking2","example1@exaple",new Date("04/16/2023"),new Date("04/20/2023"),30,{});
+
+        const room1 = new Room("Special",[booking1],1000,10);
+        const room2 = new Room("Special",[booking2],1000,10);
+
+        const rooms = [room1,room2]
+
+        expect(Room.totalOccupancyPercentage(rooms,new Date("04/16/2023"),new Date("04/20/2023"))).toEqual(80);
+    })
+
+    test('should return 0', () => {
+
+        const booking1 = new Booking("Booking1","example1@exaple",new Date("04/16/2023"),new Date("04/18/2023"),30,{});
+        const booking2 = new Booking("Booking2","example1@exaple",new Date("04/16/2023"),new Date("04/20/2023"),30,{});
+
+        const room1 = new Room("Special",[booking1],1000,10);
+        const room2 = new Room("Special",[booking2],1000,10);
+
+        const rooms = [room1,room2]
+
+        expect(Room.totalOccupancyPercentage(rooms,new Date("04/21/2023"),new Date("04/22/2023"))).toEqual(0);
+    })
+
+    test('should return 50', () => {
+
+        const booking1 = new Booking("Booking1","example1@exaple",new Date("04/16/2023"),new Date("04/18/2023"),30,{});
+        const booking2 = new Booking("Booking2","example1@exaple",new Date("04/16/2023"),new Date("04/20/2023"),30,{});
+
+        const room1 = new Room("Special",[booking1],1000,10);
+        const room2 = new Room("Special",[booking2],1000,10);
+
+        const rooms = [room1,room2]
+
+        expect(Room.totalOccupancyPercentage(rooms,new Date("04/19/2023"),new Date("04/20/2023"))).toEqual(50);
+    })
 })
 
 describe('Total price', () => {
-    test('should return 600', () => {
+    test('should return 400', () => {
 
         const room1 = new Room("Special",[],1000,10);
 
@@ -100,7 +163,39 @@ describe('Total price', () => {
 
         room1.bookings.push(booking1)
 
-        expect(booking1.getFee()).toEqual(600);
+        expect(booking1.getFee()).toEqual(400);
     })
 
+    test('should return 1000', () => {
+
+        const room1 = new Room("Special",[],1000,0);
+
+        const booking1 = new Booking("Booking1","example1@exaple",new Date("04/16/2023"),new Date("04/18/2023"),0,room1);
+
+        room1.bookings.push(booking1)
+
+        expect(booking1.getFee()).toEqual(0);
+    })
+
+    test('should return 900', () => {
+
+        const room1 = new Room("Special",[],1000,40);
+
+        const booking1 = new Booking("Booking1","example1@exaple",new Date("04/16/2023"),new Date("04/18/2023"),50,room1);
+
+        room1.bookings.push(booking1)
+
+        expect(booking1.getFee()).toEqual(900);
+    })
+
+    test('should return 900 when passing more than a total of 90%', () => {
+
+        const room1 = new Room("Special",[],1000,100);
+
+        const booking1 = new Booking("Booking1","example1@exaple",new Date("04/16/2023"),new Date("04/18/2023"),30,room1);
+
+        room1.bookings.push(booking1)
+
+        expect(booking1.getFee()).toEqual(900);
+    })
 })
